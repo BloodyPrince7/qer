@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="accent_green">#00F59B</color>
+    <color name="accent_yellow">#FFBE0B</color>
+    <color name="bg_dark">#0A0C14</color>
+    <color name="bg_surface">#141927</color>
+    <color name="black">#FF000000</color>
+    <color name="blue_ripple">#FF8CE8FF</color>
+    <color name="blue_team">#00D2FF</color>
+    <color name="blue_team_dark">#0055AA</color>
+    <color name="border_glass">#222A40</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="red_ripple">#FFFF6680</color>
+    <color name="red_team">#FF2A55</color>
+    <color name="red_team_dark">#B80024</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="text_primary">#F0F4FC</color>
+    <color name="text_secondary">#8B9BB4</color>
+    <color name="white">#FFFFFFFF</color>
+    <string name="app_name">Boxing Judge Pro</string>
+    <string name="btn_join_room">AUTHENTICATE &amp; ENTER</string>
+    <string name="hint_player_name">e.g. Judge 1, Judge 2, Judge 3</string>
+    <string name="hint_room_code">e.g. BOUT01</string>
+    <string name="hint_server_address">e.g. 10.190.168.33:3000</string>
+    <string name="label_player_name">Judge Assignment / Name</string>
+    <string name="label_room_code">Bout Room Code</string>
+    <string name="label_server_address">Arena Server Address</string>
+    <string name="status_ready">Enter bout code to begin ringside judging</string>
+    <string name="subtitle_controller">Official Ringside Scoring Console</string>
+    <string name="team_blue">BLUE</string>
+    <string name="team_red">RED</string>
+    <string name="title_red_vs_blue">BOXING JUDGE</string>
+    <style name="Theme.RedVsBlue" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/blue_team</item>
+        <item name="colorPrimaryVariant">@color/blue_team_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/red_team</item>
+        <item name="colorSecondaryVariant">@color/red_team_dark</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="android:statusBarColor">@color/bg_dark</item>
+        <item name="android:windowBackground">@color/bg_dark</item>
+    </style>
+    <style name="Theme.RedVsBlue.FullScreen" parent="Theme.RedVsBlue">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+</resources>

@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Ringside Judge Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800;900&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+
+    /* Auth Screen */
+    #authScreen {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      padding: 24px;
+      text-align: center;
+      background: #f8fafc;
+    }
+
+    .auth-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 32px 24px;
+      width: 100%;
+      max-width: 360px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+      border: 1px solid rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .brand-icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      color: #ffffff;
+    }
+
+    .auth-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+
+    .auth-sub {
+      color: #64748b;
+      font-size: 0.88rem;
+      margin-bottom: 24px;
+    }
+
+    .field-box {
+      width: 100%;
+      margin-bottom: 14px;
+      text-align: left;
+    }
+
+    .field-box label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+
+    .field-box input {
+      width: 100%;
+      padding: 13px;
+      border-radius: 10px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      font-family: inherit;
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-align: center;
+      text-transform: uppercase;
+      outline: none;
+    }
+
+    .field-box input:focus {
+      border-color: #0f172a;
+    }
+
+    .btn-auth {
+      width: 100%;
+      padding: 15px;
+      border-radius: 10px;
+      border: none;
+      background: #0f172a;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    .auth-err {
+      margin-top: 14px;
+      font-size: 0.82rem;
+      color: #e11d48;
+      font-weight: 600;
+    }
+
+    /* Judge Console Screen */
+    #judgeScreen {
+      display: none;
+      width: 100%;
+      height: 100%;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .split-half {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: filter 0.08s ease;
+    }
+
+    .split-half:active {
+      filter: brightness(1.15);
+    }
+
+    /* UPPER HALF: BLUE CORNER */
+    .half-blue {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
+    /* LOWER HALF: RED CORNER */
+    .half-red {
+      background: #e11d48;
+      color: #ffffff;
+    }
+
+    .corner-label {
+      font-size: 2.75rem;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+
+    .fighter-subname {
+      font-size: 1.25rem;
+      font-weight: 700;
+      opacity: 0.9;
+      margin-top: 6px;
+    }
+
+    .judge-tally {
+      margin-top: 16px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(8px);
+      padding: 6px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    /* Floating Center Pill */
+    .center-pill {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 20;
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 999px;
+      padding: 8px 22px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      color: #0f172a;
+    }
+
+    .pill-round {
+      font-size: 0.85rem;
+      font-weight: 800;
+    }
+
+    .pill-clock {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #2563eb;
+    }
+
+    .pill-judge {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #64748b;
+    }
+
+    /* Lockout Overlay */
+    .lockout-layer {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 24px;
+      color: #ffffff;
+    }
+
+    .lockout-svg-box {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .lockout-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .lockout-msg {
+      color: #94a3b8;
+      font-size: 0.95rem;
+      margin-top: 6px;
+    }
+
+    /* Touch Ripple */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.45);
+      transform: scale(0);
+      animation: rip 0.4s linear;
+      pointer-events: none;
+    }
+    @keyframes rip {
+      to { transform: scale(4); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Auth Screen -->
+  <div id="authScreen">
+    <div class="auth-card">
+      <div class="brand-icon-box">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+          <polyline points="2 17 12 22 22 17"></polyline>
+          <polyline points="2 12 12 17 22 12"></polyline>
+        </svg>
+      </div>
+
+      <h1 class="auth-title">Ringside Judge</h1>
+      <p class="auth-sub">Official Scoring Console</p>
+
+      <div class="field-box">
+        <label>BOUT ROOM CODE</label>
+        <input type="text" id="codeIn" placeholder="ENTER CODE" maxlength="10">
+      </div>
+
+      <div class="field-box">
+        <label>JUDGE SEAT</label>
+        <input type="text" id="nameIn" placeholder="JUDGE 1" maxlength="15">
+      </div>
+
+      <button id="btnAuth" class="btn-auth">Join Match</button>
+      <div id="authErr" class="auth-err"></div>
+    </div>
+  </div>
+
+  <!-- Judge Console Screen (Upper Blue, Lower Red) -->
+  <div id="judgeScreen">
+    <!-- Center Info Bar -->
+    <div class="center-pill">
+      <span class="pill-round" id="pillRound">ROUND 1</span>
+      <span class="pill-clock" id="pillClock">03:00</span>
+      <span class="pill-judge" id="pillJudge">JUDGE 1</span>
+    </div>
+
+    <!-- UPPER HALF: BLUE CORNER -->
+    <div class="split-half half-blue" id="halfBlue">
+      <span class="corner-label">BLUE CORNER</span>
+      <span class="fighter-subname" id="nameBlue">BLUE FIGHTER</span>
+      <span class="judge-tally">Clean Strikes: <span id="blueTaps">0</span></span>
+    </div>
+
+    <!-- LOWER HALF: RED CORNER -->
+    <div class="split-half half-red" id="halfRed">
+      <span class="corner-label">RED CORNER</span>
+      <span class="fighter-subname" id="nameRed">RED FIGHTER</span>
+      <span class="judge-tally">Clean Strikes: <span id="redTaps">0</span></span>
+    </div>
+
+    <!-- Lockout Overlay -->
+    <div id="lockoutLayer" class="lockout-layer" style="display: none;">
+      <div class="lockout-svg-box">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="6" y="4" width="4" height="16"></rect>
+          <rect x="14" y="4" width="4" height="16"></rect>
+        </svg>
+      </div>
+      <div class="lockout-title" id="lockTitle">ROUND PAUSED</div>
+      <div class="lockout-msg" id="lockMsg">Awaiting referee / admin resume</div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    let currentCode = null;
+    let myJudgeName = 'Judge 1';
+    let myBlueCount = 0;
+    let myRedCount = 0;
+    let isLocked = false;
+    let currentRoundNum = 1;
+
+    const authScreen = document.getElementById('authScreen');
+    const judgeScreen = document.getElementById('judgeScreen');
+    const codeIn = document.getElementById('codeIn');
+    const nameIn = document.getElementById('nameIn');
+    const btnAuth = document.getElementById('btnAuth');
+    const authErr = document.getElementById('authErr');
+
+    const halfBlue = document.getElementById('halfBlue');
+    const halfRed = document.getElementById('halfRed');
+    const nameBlue = document.getElementById('nameBlue');
+    const nameRed = document.getElementById('nameRed');
+    const blueTaps = document.getElementById('blueTaps');
+    const redTaps = document.getElementById('redTaps');
+    const pillRound = document.getElementById('pillRound');
+    const pillClock = document.getElementById('pillClock');
+    const pillJudge = document.getElementById('pillJudge');
+    const lockoutLayer = document.getElementById('lockoutLayer');
+    const lockTitle = document.getElementById('lockTitle');
+    const lockMsg = document.getElementById('lockMsg');
+
+    // Parse URL params
+    const q = new URLSearchParams(window.location.search);
+    if (q.get('room')) codeIn.value = q.get('room').toUpperCase();
+    nameIn.value = 'Judge ' + (Math.floor(Math.random() * 3) + 1);
+
+    btnAuth.addEventListener('click', joinMatch);
+    codeIn.addEventListener('keydown', (e) => { if (e.key === 'Enter') joinMatch(); });
+
+    function joinMatch() {
+      const code = codeIn.value.trim().toUpperCase();
+      const name = nameIn.value.trim() || 'Judge 1';
+
+      if (!code) {
+        authErr.textContent = 'Please enter bout code';
+        return;
+      }
+
+      authErr.textContent = 'Authenticating...';
+      authErr.style.color = '#2563eb';
+
+      socket.emit('join_room', { roomCode: code, judgeName: name, playerName: name }, (res) => {
+        if (res && res.success) {
+          currentCode = code;
+          myJudgeName = name;
+          pillJudge.textContent = name.toUpperCase();
+
+          authScreen.style.display = 'none';
+          judgeScreen.style.display = 'flex';
+
+          applyState(res.bout || res.room);
+        } else {
+          authErr.textContent = (res && res.error) || 'Failed to authenticate';
+          authErr.style.color = '#e11d48';
+        }
+      });
+    }
+
+    function createRipple(e, el) {
+      const rect = el.getBoundingClientRect();
+      const rip = document.createElement('span');
+      rip.className = 'ripple';
+      const size = Math.max(rect.width, rect.height);
+      const cx = e.touches ? e.touches[0].clientX : e.clientX;
+      const cy = e.touches ? e.touches[0].clientY : e.clientY;
+      rip.style.width = rip.style.height = `${size}px`;
+      rip.style.left = `${cx - rect.left - size / 2}px`;
+      rip.style.top = `${cy - rect.top - size / 2}px`;
+      el.appendChild(rip);
+      setTimeout(() => rip.remove(), 400);
+
+      if (navigator.vibrate) navigator.vibrate(35);
+    }
+
+    function sendTap(corner, e) {
+      if (isLocked) return;
+      createRipple(e, corner === 'blue' ? halfBlue : halfRed);
+
+      if (corner === 'blue') {
+        myBlueCount++;
+        blueTaps.textContent = myBlueCount;
+      } else {
+        myRedCount++;
+        redTaps.textContent = myRedCount;
+      }
+
+      socket.emit('tap', {
+        roomCode: currentCode,
+        team: corner,
+        judgeName: myJudgeName
+      });
+    }
+
+    halfBlue.addEventListener('pointerdown', (e) => sendTap('blue', e));
+    halfRed.addEventListener('pointerdown', (e) => sendTap('red', e));
+
+    socket.on('clock_tick', (data) => {
+      pillClock.textContent = formatSec(data.roundTimeRemaining);
+    });
+
+    socket.on('rest_tick', (data) => {
+      pillClock.textContent = `REST ${data.restTimeRemaining}s`;
+    });
+
+    socket.on('match_state_update', (bout) => {
+      applyState(bout);
+    });
+
+    function applyState(bout) {
+      if (!bout) return;
+      if (bout.redFighter) nameRed.textContent = bout.redFighter.toUpperCase();
+      if (bout.blueFighter) nameBlue.textContent = bout.blueFighter.toUpperCase();
+
+      if (bout.currentRound !== currentRoundNum) {
+        currentRoundNum = bout.currentRound;
+        myBlueCount = 0;
+        myRedCount = 0;
+        blueTaps.textContent = '0';
+        redTaps.textContent = '0';
+      }
+
+      pillRound.textContent = `ROUND ${bout.currentRound}`;
+
+      if (bout.state === 'ROUND_ACTIVE') {
+        isLocked = false;
+        lockoutLayer.style.display = 'none';
+        pillClock.textContent = formatSec(bout.roundTimeRemaining);
+      } else if (bout.state === 'ROUND_PAUSED') {
+        isLocked = true;
+        lockoutLayer.style.display = 'flex';
+        lockTitle.textContent = 'ROUND PAUSED';
+        lockMsg.textContent = 'Awaiting referee / admin resume';
+      } else if (bout.state === 'ROUND_REST') {
+        isLocked = true;
+        lockoutLayer.style.display = 'flex';
+        lockTitle.textContent = `ROUND ${bout.currentRound} CONCLUDED`;
+        lockMsg.textContent = `Rest Interval: ${bout.restTimeRemaining}s`;
+      } else if (bout.state === 'MATCH_FINISHED') {
+        isLocked = true;
+        lockoutLayer.style.display = 'flex';
+        lockTitle.textContent = 'BOUT CONCLUDED';
+        lockMsg.textContent = bout.finalDecision?.decision || 'Final decisions on main arena board';
+      } else {
+        isLocked = true;
+        lockoutLayer.style.display = 'flex';
+        lockTitle.textContent = 'PRE-FIGHT PREPARATION';
+        lockMsg.textContent = 'Referee will ring the opening bell';
+      }
+    }
+
+    function formatSec(s) {
+      const m = Math.floor(s / 60);
+      const sec = s % 60;
+      return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+    }
+  </script>
+</body>
+</html>

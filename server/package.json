@@ -1,0 +1,17 @@
+{
+  "name": "ringside-boxing-scoring-server",
+  "version": "3.0.0",
+  "description": "Ringside Boxing Match Administration & Live Judging Scoring System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  }
+}

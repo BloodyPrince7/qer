@@ -1,0 +1,34 @@
+[
+    {
+        "merged": "C:\\Users\\Pankaj\\.gradle\\daemon\\8.6\\com.example.redvsblue.app-debug-31:\\drawable_bg_red_half.xml.flat",
+        "source": "C:\\Users\\Pankaj\\.gradle\\daemon\\8.6\\com.example.redvsblue.app-main-33:\\drawable\\bg_red_half.xml"
+    },
+    {
+        "merged": "C:\\Users\\Pankaj\\.gradle\\daemon\\8.6\\com.example.redvsblue.app-debug-31:\\drawable_bg_blue_half.xml.flat",
+        "source": "C:\\Users\\Pankaj\\.gradle\\daemon\\8.6\\com.example.redvsblue.app-main-33:\\drawable\\bg_blue_half.xml"
+    },
+    {
+        "merged": "C:\\Users\\Pankaj\\.gradle\\daemon\\8.6\\com.example.redvsblue.app-debug-31:\\layout_activity_game.xml.flat",
+        "source": "C:\\Users\\Pankaj\\.gradle\\daemon\\8.6\\com.example.redvsblue.app-main-33:\\layout\\activity_game.xml"
+    },
+    {
+        "merged": "C:\\Users\\Pankaj\\.gradle\\daemon\\8.6\\com.example.redvsblue.app-debug-31:\\layout_activity_main.xml.flat",
+        "source": "C:\\Users\\Pankaj\\.gradle\\daemon\\8.6\\com.example.redvsblue.app-main-33:\\layout\\activity_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\Pankaj\\.gradle\\daemon\\8.6\\com.example.redvsblue.app-debug-31:\\drawable_bg_card.xml.flat",
+        "source": "C:\\Users\\Pankaj\\.gradle\\daemon\\8.6\\com.example.redvsblue.app-main-33:\\drawable\\bg_card.xml"
+    },
+    {
+        "merged": "com.example.redvsblue.app-debug-31:/layout_activity_game.xml.flat",
+        "source": "com.example.redvsblue.app-main-33:/layout/activity_game.xml"
+    },
+    {
+        "merged": "C:\\Users\\Pankaj\\.gradle\\daemon\\8.6\\com.example.redvsblue.app-debug-31:\\drawable_bg_pill.xml.flat",
+        "source": "C:\\Users\\Pankaj\\.gradle\\daemon\\8.6\\com.example.redvsblue.app-main-33:\\drawable\\bg_pill.xml"
+    },
+    {
+        "merged": "C:\\Users\\Pankaj\\.gradle\\daemon\\8.6\\com.example.redvsblue.app-debug-31:\\drawable_ic_launcher.xml.flat",
+        "source": "C:\\Users\\Pankaj\\.gradle\\daemon\\8.6\\com.example.redvsblue.app-main-33:\\drawable\\ic_launcher.xml"
+    }
+]

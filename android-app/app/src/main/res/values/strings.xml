@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Boxing Judge Pro</string>
+    <string name="title_red_vs_blue">BOXING JUDGE</string>
+    <string name="subtitle_controller">Official Ringside Scoring Console</string>
+    <string name="label_server_address">Arena Server Address</string>
+    <string name="hint_server_address">e.g. 10.190.168.33:3000</string>
+    <string name="label_room_code">Bout Room Code</string>
+    <string name="hint_room_code">e.g. BOUT01</string>
+    <string name="label_player_name">Judge Assignment / Name</string>
+    <string name="hint_player_name">e.g. Judge 1, Judge 2, Judge 3</string>
+    <string name="btn_join_room">AUTHENTICATE &amp; ENTER</string>
+    <string name="status_ready">Enter bout code to begin ringside judging</string>
+    <string name="team_red">RED</string>
+    <string name="team_blue">BLUE</string>
+</resources>
