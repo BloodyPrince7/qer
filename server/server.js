@@ -543,7 +543,15 @@ io.on('connection', (socket) => {
     if (!bout) return;
     if (bout.state !== 'ROUND_ACTIVE') return;
 
-    const judgeName = currentJudgeName || data.judgeName || 'Judge';
+    let judgeName = currentJudgeName || data.judgeName;
+    if (!judgeName && bout.judges.has(socket.id)) {
+      judgeName = bout.judges.get(socket.id).name;
+    }
+    if (!judgeName) judgeName = 'Judge';
+
+    if (!bout.currentRoundStats.judgeStrikes) {
+      bout.currentRoundStats.judgeStrikes = {};
+    }
 
     if (!bout.currentRoundStats.judgeStrikes[judgeName]) {
       bout.currentRoundStats.judgeStrikes[judgeName] = { red: 0, blue: 0 };
@@ -563,7 +571,8 @@ io.on('connection', (socket) => {
       redTotal: bout.currentRoundStats.redStrikes,
       blueTotal: bout.currentRoundStats.blueStrikes,
       currentRound: bout.currentRound,
-      roundStats: bout.currentRoundStats
+      roundStats: bout.currentRoundStats,
+      judges: Array.from(bout.judges.values())
     });
   });
 

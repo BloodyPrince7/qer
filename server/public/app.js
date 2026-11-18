@@ -247,8 +247,26 @@ function handleLiveStrike(data) {
   el.dashRedStrikes.textContent = data.redTotal;
   el.dashBlueStrikes.textContent = data.blueTotal;
 
+  // Maintain local boutData state cache
+  if (boutState.boutData) {
+    if (!boutState.boutData.currentRoundStats) {
+      boutState.boutData.currentRoundStats = {};
+    }
+    boutState.boutData.currentRoundStats.redStrikes = data.redTotal;
+    boutState.boutData.currentRoundStats.blueStrikes = data.blueTotal;
+    boutState.boutData.currentRoundStats.judgeStrikes = data.roundStats?.judgeStrikes || {};
+    if (data.judges && data.judges.length > 0) {
+      boutState.boutData.judges = data.judges;
+    }
+  }
+
   updateGauge(data.blueTotal, data.redTotal);
-  renderJudgesGrid(data.roundStats?.judgeStrikes || {});
+
+  const judgesList = (data.judges && data.judges.length > 0)
+    ? data.judges
+    : (boutState.boutData?.judges || []);
+
+  renderJudgesGrid(data.roundStats?.judgeStrikes || (boutState.boutData?.currentRoundStats?.judgeStrikes || {}), judgesList);
 }
 
 function updateGauge(blue, red) {
@@ -341,8 +359,20 @@ function renderDashboardUI(bout) {
 }
 
 // Render Ringside Judges Breakdown
-function renderJudgesGrid(judgeStrikes = {}, judges = []) {
-  if (!judges || judges.length === 0) {
+function renderJudgesGrid(judgeStrikes = {}, judges = null) {
+  let activeJudges = judges;
+  if (!activeJudges || activeJudges.length === 0) {
+    if (boutState.boutData?.judges && boutState.boutData.judges.length > 0) {
+      activeJudges = boutState.boutData.judges;
+    } else {
+      const strikeKeys = Object.keys(judgeStrikes || {});
+      if (strikeKeys.length > 0) {
+        activeJudges = strikeKeys.map(k => ({ name: k, id: k }));
+      }
+    }
+  }
+
+  if (!activeJudges || activeJudges.length === 0) {
     el.judgeCardsGrid.innerHTML = `
       <div class="empty-state-notice">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -355,7 +385,11 @@ function renderJudgesGrid(judgeStrikes = {}, judges = []) {
     return;
   }
 
-  el.judgeCardsGrid.innerHTML = judges.map(j => {
+  if (el.judgeRosterCount) {
+    el.judgeRosterCount.textContent = `${activeJudges.length} Judge${activeJudges.length === 1 ? '' : 's'} Connected`;
+  }
+
+  el.judgeCardsGrid.innerHTML = activeJudges.map(j => {
     const s = judgeStrikes[j.name] || { blue: 0, red: 0 };
     return `
       <div class="judge-live-card">
@@ -382,6 +416,11 @@ function renderJudgesGrid(judgeStrikes = {}, judges = []) {
 // Render Official 10-Point-Must Scorecard
 function renderScorecardTable(bout) {
   const rounds = bout.completedRounds || [];
+  const judges = bout.judges || [];
+
+  if (el.thJ1Header && judges[0]) el.thJ1Header.textContent = `${judges[0].name.toUpperCase()} (B : R)`;
+  if (el.thJ2Header && judges[1]) el.thJ2Header.textContent = `${judges[1].name.toUpperCase()} (B : R)`;
+  if (el.thJ3Header && judges[2]) el.thJ3Header.textContent = `${judges[2].name.toUpperCase()} (B : R)`;
 
   if (rounds.length === 0) {
     el.scorecardRowsBody.innerHTML = `
@@ -400,19 +439,20 @@ function renderScorecardTable(bout) {
     totB += r.blueStrikes;
     totR += r.redStrikes;
 
-    const j1 = r.judgeScores[0] || { blue: 9, red: 10 };
-    const j2 = r.judgeScores[1] || { blue: 9, red: 10 };
-    const j3 = r.judgeScores[2] || { blue: 9, red: 10 };
+    const j1 = r.judgeScores && r.judgeScores[0];
+    const j2 = r.judgeScores && r.judgeScores[1];
+    const j3 = r.judgeScores && r.judgeScores[2];
 
-    jTotals.j1.b += j1.blue;
-    jTotals.j1.r += j1.red;
-    jTotals.j2.b += j2.blue;
-    jTotals.j2.r += j2.red;
-    jTotals.j3.b += j3.blue;
-    jTotals.j3.r += j3.red;
+    if (j1) { jTotals.j1.b += j1.blue; jTotals.j1.r += j1.red; }
+    if (j2) { jTotals.j2.b += j2.blue; jTotals.j2.r += j2.red; }
+    if (j3) { jTotals.j3.b += j3.blue; jTotals.j3.r += j3.red; }
+
+    const j1Text = j1 ? `${j1.blue} - ${j1.red}` : '—';
+    const j2Text = j2 ? `${j2.blue} - ${j2.red}` : '—';
+    const j3Text = j3 ? `${j3.blue} - ${j3.red}` : '—';
 
     const winClass = r.roundWinner === 'BLUE' ? 'winner-blue-cell' : (r.roundWinner === 'RED' ? 'winner-red-cell' : '');
-    const winName = r.roundWinner === 'BLUE' ? `${bout.blueFighter} (10 - ${r.judgeScores[0]?.red || 9})` : (r.roundWinner === 'RED' ? `${bout.redFighter} (10 - ${r.judgeScores[0]?.blue || 9})` : 'EVEN (10 - 10)');
+    const winName = r.roundWinner === 'BLUE' ? `${bout.blueFighter} (10 - ${j1 ? j1.red : 9})` : (r.roundWinner === 'RED' ? `${bout.redFighter} (10 - ${j1 ? j1.blue : 9})` : 'EVEN (10 - 10)');
 
     return `
       <tr>
@@ -420,9 +460,9 @@ function renderScorecardTable(bout) {
         <td>${r.blueStrikes}</td>
         <td>${r.redStrikes}</td>
         <td style="font-size: 0.78rem; color: #64748b;">KD: B${r.blueKnockdowns}/R${r.redKnockdowns} &bull; Foul: B${r.bluePenalties}/R${r.redPenalties}</td>
-        <td>${j1.blue} - ${j1.red}</td>
-        <td>${j2.blue} - ${j2.red}</td>
-        <td>${j3.blue} - ${j3.red}</td>
+        <td>${j1Text}</td>
+        <td>${j2Text}</td>
+        <td>${j3Text}</td>
         <td class="${winClass}">${winName}</td>
       </tr>
     `;
@@ -430,9 +470,9 @@ function renderScorecardTable(bout) {
 
   el.totBlueStrikes.textContent = totB;
   el.totRedStrikes.textContent = totR;
-  el.totJudge1.textContent = `${jTotals.j1.b} - ${jTotals.j1.r}`;
-  el.totJudge2.textContent = `${jTotals.j2.b} - ${jTotals.j2.r}`;
-  el.totJudge3.textContent = `${jTotals.j3.b} - ${jTotals.j3.r}`;
+  el.totJudge1.textContent = judges[0] ? `${jTotals.j1.b} - ${jTotals.j1.r}` : '—';
+  el.totJudge2.textContent = judges[1] ? `${jTotals.j2.b} - ${jTotals.j2.r}` : '—';
+  el.totJudge3.textContent = judges[2] ? `${jTotals.j3.b} - ${jTotals.j3.r}` : '—';
 
   if (bout.finalDecision) {
     el.finalDecisionBanner.classList.remove('hidden');
