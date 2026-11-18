@@ -1,0 +1,12 @@
+{
+  "name": "ringside-boxing-scoring",
+  "version": "3.0.0",
+  "description": "Ringside Boxing Match Administration & Live Judging Scoring System",
+  "scripts": {
+    "postinstall": "cd server && npm install",
+    "start": "cd server && npm start"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
